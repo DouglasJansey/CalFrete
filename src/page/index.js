@@ -2,19 +2,22 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { googleMaps } from '../components/googleMap';
 import {
-    Container, ContainerForm, PostalCodes,
+    Container, ContainerForm, PostalCodes, Select,
     Label, Form, PopUp, ContainerPopUp, ButtonSubmit, AlertError,
 } from './styled';
+import { distritos } from '../components/Distritos';
+
 export default function Calculator() {
     let visible = false;
     let alert = false;
-    const [err , setErr] = useState(false);
+    let isValid = false;
+    const [err, setErr] = useState(false);
     const [cepOrigem, setCepOrigem] = useState('');
     const [cepDestino, setCepDestino] = useState('');
     const [distance, setDistance] = useState('');
     const [duration, setDuration] = useState('');
     const total = calcTotal(distance || '');
-
+    console.log(distritos);
     useEffect(() => {
         if (cepOrigem && cepDestino) {
             //chamando a função getData apenas se tiver cepOrigem e cepDestino
@@ -32,12 +35,12 @@ export default function Calculator() {
     }, [cepDestino, cepOrigem]);
 
     function calcTotal(distance) {
-        if(err) alert = true;
+        if (err && (cepOrigem && cepDestino)) alert = true;
         if (distance && !err) {
             alert = false;
-        const value = 0.20;
-        const dist = parseFloat(distance).toFixed(2) || 0;
-        let total = 0;
+            const value = 0.20;
+            const dist = parseFloat(distance).toFixed(2) || 0;
+            let total = 0;
             total = value * dist;
             if (total > 0) visible = true;
 
@@ -47,33 +50,35 @@ export default function Calculator() {
     }
     function dataFilter(data) {
         GetAddress(data);
-            if (data.rows) {
-                const { status } = data.rows[0].elements[0];
-                if (status === 'OK') {
-                    const info = data.rows[0].elements[0];
-                    for (let key in info) {
-                        if (key === 'distance') {
-                            const valueDistance = Math.round(info.distance.value / 1000);
-                            const valueDuration = info.duration.text;
-                            setDistance(valueDistance);
-                            setDuration(valueDuration);
-                        }
+        if (data.rows) {
+            const { status } = data.rows[0].elements[0];
+            if (status === 'OK') {
+                const info = data.rows[0].elements[0];
+                for (let key in info) {
+                    if (key === 'distance') {
+                        const valueDistance = Math.round(info.distance.value / 1000);
+                        const valueDuration = info.duration.text;
+                        setDistance(valueDistance);
+                        setDuration(valueDuration);
                     }
                 }
             }
+        }
     }
     function GetAddress(data) {
         const destination = data.destination_addresses[0].split(', ');
         const origin = data.origin_addresses[0].split(', ');
-        (!destination.includes('Portugal') || !origin.includes('Portugal')) 
-        ? setErr(true) : setErr(false);   
+        if(!cepOrigem || !cepDestino) isValid = true;
+        (!destination.includes('Portugal') || !origin.includes('Portugal'))
+            ? setErr(true) : setErr(false);
     }
-    console.log(err);
+    console.log(isValid, cepDestino, cepOrigem);
     function handleSubmit(e) {
         e.preventDefault();
         //pegando os valores dos inputs após o submit
-        setCepOrigem(e.target['cepOrigem'].value);
-        setCepDestino(e.target['cepDestino'].value);
+
+        setCepOrigem(e.target['origin'].value);
+        setCepDestino(e.target['destination'].value);
     }
 
     return (
@@ -81,28 +86,30 @@ export default function Calculator() {
             <ContainerForm>
                 <h1>Faça uma Simulação</h1>
                 <Form onSubmit={(e) => handleSubmit(e)}>
-                    <PostalCodes>
-                        <Label>
-                            De onde:
-                            <PostalCodes>
-                                <input disabled type="text" value="Portugal" />
-                                <input name='cepOrigem'
-                                    type="text"
-                                    placeholder='Qual o Distrito?'
-                                />
-                            </PostalCodes>
-                        </Label>
-                        <Label>
-                            Para onde:
-                            <PostalCodes>
-                                <input disabled type="text" value="Portugal" />
-                                <input name='cepDestino'
-                                    type="text"
-                                    placeholder='Qual o Distrito?'
-                                />
-                            </PostalCodes>
-                        </Label>
+                    <PostalCodes>         
+                            <Label>
+                                De onde:
+                                <Select name="origin">
+                                    <option hidden defaultChecked value=''>Qual é o Distrito?*</option>
+                                    {distritos.map((item, index) => (
+                                        <option name="ceporigin" key={index} value={item.value}>
+                                            {item}</option>
+                                    ))}
+                                </Select>
+
+                            </Label>
+                            <Label>
+                                Para onde:
+                                <Select name="destination">
+                                    <option hidden defaultChecked value=''>Qual é o Distrito?*</option>
+                                    {distritos.map((item, index) => (
+                                        <option name="cepdestino" key={index} value={item.value}>
+                                            {item}</option>
+                                    ))}
+                                </Select>
+                            </Label>
                     </PostalCodes>
+
                     <span>
                         <Label>
                             Qual a dimensão da sua encomenda:
@@ -124,6 +131,6 @@ export default function Calculator() {
                     <AlertError alertVisible={alert}>No momento só estamos entregando em Portugal</AlertError>
                 </ContainerPopUp>
             </ContainerForm>
-        </Container>
+        </Container >
     )
 }

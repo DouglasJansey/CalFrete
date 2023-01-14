@@ -15,37 +15,42 @@ export const Form = styled.form`
     height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    padding: 5px;
+    padding: 2px;
+    
     span{
         width: 100%;
         display: flex;
         flex-wrap: wrap;
-        margin-top: 50px;
+        margin-top: 30px;
+        justify-content: center;
+        align-items: center;
     }
 `;
 export const ContainerForm = styled.div`
-    width: 80%;
-    min-width: 400px;
+    width: 70%;
+    min-width: 200px;
     height: 100%;
     align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
     background: #fff;
     display:flex;
     flex-direction: column;
     position: relative;
     padding: 15px;
     h1{
-       
+        text-align: center;
     }
 `;
 export const PostalCodes = styled.div`
     display: flex;
     width: 100%;
     height: 30%;
+    flex-wrap: wrap;
     justify-content: space-around;
-    align-items: space-around;
-
+    align-items: center;
 `;
 export const PopUp = styled.span`
     width: auto;
@@ -87,18 +92,19 @@ export const ContainerPopUp = styled.span`
 export const Label = styled.label`
     display: flex;
     justify-content: center;
-    display: flex;
-    flex-wrap: wrap;
-    width: 99%;
+    align-items: center;
+    flex-direction: column;
+    width: auto;
     height: 15%;
     padding: 5px;
     position: relative;
+    margin-top: 15px;
     input{
         border: none;
         height: 25px;
-        margin-top: 25px;
+        margin-top: 15px;
         padding: 2px;
-        width: 40%;
+        width: 155px;
         margin-left: 10px;
         border-bottom: 2px solid ${primary};
 
@@ -110,6 +116,31 @@ export const Label = styled.label`
         }
     }
 `;
+export const Select = styled.select`
+        border: none;
+        background: none;
+        height: 25px;
+        padding: 2px;
+        width: 200px;
+        margin-left: 10px;
+        border-bottom: 2px solid ${primary};
+        padding: 2px;
+        text-align: center;
+        margin-top: 5px;
+        :focus{
+            outline: 2px solid ${primary};
+            border-bottom: none;
+            padding: 2px;
+            background: none;
+        }
+        option{
+            color: ${primary};
+            font-size: 13px;
+            padding: 10px;
+           
+        }
+`;
+
 export const ButtonSubmit = styled.button`
     margin-top: 20px;
     width: 200px;
