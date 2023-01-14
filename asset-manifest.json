@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/static/js/main.e76b4c16.js",
-    "index.html": "/index.html",
-    "main.e76b4c16.js.map": "/static/js/main.e76b4c16.js.map"
+    "main.js": "/calcularfrete/static/js/main.c3ea51e3.js",
+    "index.html": "/calcularfrete/index.html",
+    "main.c3ea51e3.js.map": "/calcularfrete/static/js/main.c3ea51e3.js.map"
   },
   "entrypoints": [
-    "static/js/main.e76b4c16.js"
+    "static/js/main.c3ea51e3.js"
   ]
 }
