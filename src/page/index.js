@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { Loader } from "@googlemaps/js-api-loader";
 import { googleMaps } from '../components/googleMap';
+
 import {
     Container, ContainerForm, PostalCodes, Select,
     Label, Form, PopUp, ContainerPopUp, ButtonSubmit, AlertError,
@@ -8,6 +10,11 @@ import {
 import { distritos } from '../components/Distritos';
 
 export default function Calculator() {
+    const loader = new Loader({
+        apiKey: process.env.REACT_APP_API_KEY,
+        version: "weekly",
+      })
+   // const service = new window.google.maps.DistanceMatrixService();
     let visible = false;
     let alert = false;
     let isValid = false;
@@ -17,21 +24,19 @@ export default function Calculator() {
     const [distance, setDistance] = useState('');
     const [duration, setDuration] = useState('');
     const total = calcTotal(distance || '');
-    console.log(distritos);
+
     useEffect(() => {
+        loader.load().then(() =>{
         if (cepOrigem && cepDestino) {
-            //chamando a função getData apenas se tiver cepOrigem e cepDestino
-            async function getData() {
-                axios(googleMaps(cepOrigem, cepDestino))
-                    .then(res => res).then(response => {
-                        dataFilter(response.data);
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+            const service = new window.google.maps.DistanceMatrixService();
+                service.getDistanceMatrix(
+                {
+                    origins: [cepOrigem],
+                    destinations: [cepDestino],
+                    travelMode: 'DRIVING',
+                },(res)=> dataFilter(res))
             }
-            getData();
-        }
+        })
     }, [cepDestino, cepOrigem]);
 
     function calcTotal(distance) {
@@ -49,8 +54,8 @@ export default function Calculator() {
         return '';
     }
     function dataFilter(data) {
-        GetAddress(data);
-        if (data.rows) {
+        GetAddress(data)
+        if (data && data.rows) {
             const { status } = data.rows[0].elements[0];
             if (status === 'OK') {
                 const info = data.rows[0].elements[0];
@@ -66,13 +71,14 @@ export default function Calculator() {
         }
     }
     function GetAddress(data) {
-        const destination = data.destination_addresses[0].split(', ');
-        const origin = data.origin_addresses[0].split(', ');
-        if(!cepOrigem || !cepDestino) isValid = true;
+        const destination = data.destinationAddresses[0].split(', ');
+        const origin = data.originAddresses[0].split(', ');
+        if (!cepOrigem || !cepDestino) isValid = true;
         (!destination.includes('Portugal') || !origin.includes('Portugal'))
             ? setErr(true) : setErr(false);
+           // if(origin[0] === destination[0]);
     }
-    console.log(isValid, cepDestino, cepOrigem);
+
     function handleSubmit(e) {
         e.preventDefault();
         //pegando os valores dos inputs após o submit
@@ -86,28 +92,28 @@ export default function Calculator() {
             <ContainerForm>
                 <h1>Faça uma Simulação</h1>
                 <Form onSubmit={(e) => handleSubmit(e)}>
-                    <PostalCodes>         
-                            <Label>
-                                De onde:
-                                <Select name="origin">
-                                    <option hidden defaultChecked value=''>Qual é o Distrito?*</option>
-                                    {distritos.map((item, index) => (
-                                        <option name="ceporigin" key={index} value={item.value}>
-                                            {item}</option>
-                                    ))}
-                                </Select>
+                    <PostalCodes>
+                        <Label>
+                            De onde:
+                            <Select name="origin">
+                                <option hidden defaultChecked value=''>Qual é o Distrito?*</option>
+                                {distritos.map((item, index) => (
+                                    <option name="ceporigin" key={index} value={item.value}>
+                                        {item}</option>
+                                ))}
+                            </Select>
 
-                            </Label>
-                            <Label>
-                                Para onde:
-                                <Select name="destination">
-                                    <option hidden defaultChecked value=''>Qual é o Distrito?*</option>
-                                    {distritos.map((item, index) => (
-                                        <option name="cepdestino" key={index} value={item.value}>
-                                            {item}</option>
-                                    ))}
-                                </Select>
-                            </Label>
+                        </Label>
+                        <Label>
+                            Para onde:
+                            <Select name="destination">
+                                <option hidden defaultChecked value=''>Qual é o Distrito?*</option>
+                                {distritos.map((item, index) => (
+                                    <option name="cepdestino" key={index} value={item.value}>
+                                        {item}</option>
+                                ))}
+                            </Select>
+                        </Label>
                     </PostalCodes>
 
                     <span>
@@ -126,7 +132,6 @@ export default function Calculator() {
                 <ContainerPopUp>
                     <PopUp active={visible} >
                         <div>Valor do frete: {visible ? total : ''}€</div>
-                        <div>Tempo estimado de: {duration}</div>
                     </PopUp>
                     <AlertError alertVisible={alert}>No momento só estamos entregando em Portugal</AlertError>
                 </ContainerPopUp>
