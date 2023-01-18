@@ -1,7 +1,8 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
 import { Loader } from "@googlemaps/js-api-loader";
-import { googleMaps } from '../components/googleMap';
+import TablePrice from '../components/Address';
 
 import {
     Container, ContainerForm, PostalCodes, Select,
@@ -15,76 +16,49 @@ export default function Calculator() {
         version: "weekly",
       })
    // const service = new window.google.maps.DistanceMatrixService();
-    let visible = false;
+    let visible = true;
     let alert = false;
     let isValid = false;
     const [err, setErr] = useState(false);
     const [cepOrigem, setCepOrigem] = useState('');
     const [cepDestino, setCepDestino] = useState('');
+    const [peso, setPeso] = useState('');
     const [distance, setDistance] = useState('');
-    const [duration, setDuration] = useState('');
-    const total = calcTotal(distance || '');
+    const [CalcTabela, setCalcTabela] = useState(cepDestino);
+
 
     useEffect(() => {
         loader.load().then(() =>{
-        if (cepOrigem && cepDestino) {
             const service = new window.google.maps.DistanceMatrixService();
+        if (cepOrigem && cepDestino) {
                 service.getDistanceMatrix(
                 {
                     origins: [cepOrigem],
                     destinations: [cepDestino],
                     travelMode: 'DRIVING',
-                },(res)=> dataFilter(res))
+                },(res)=> GetAddress(res))
             }
         })
-    }, [cepDestino, cepOrigem]);
-
-    function calcTotal(distance) {
-        if (err && (cepOrigem && cepDestino)) alert = true;
-        if (distance && !err) {
-            alert = false;
-            const value = 0.20;
-            const dist = parseFloat(distance).toFixed(2) || 0;
-            let total = 0;
-            total = value * dist;
-            if (total > 0) visible = true;
-
-            return total.toFixed(2);
-        }
-        return '';
-    }
-    function dataFilter(data) {
-        GetAddress(data)
-        if (data && data.rows) {
-            const { status } = data.rows[0].elements[0];
-            if (status === 'OK') {
-                const info = data.rows[0].elements[0];
-                for (let key in info) {
-                    if (key === 'distance') {
-                        const valueDistance = Math.round(info.distance.value / 1000);
-                        const valueDuration = info.duration.text;
-                        setDistance(valueDistance);
-                        setDuration(valueDuration);
-                    }
-                }
-            }
-        }
-    }
+    }, [cepDestino, cepOrigem, peso]);
+    
     function GetAddress(data) {
         const destination = data.destinationAddresses[0].split(', ');
         const origin = data.originAddresses[0].split(', ');
+        const obj = { peso, destination: destination[0].replace(/\d.*\d./,"") }
         if (!cepOrigem || !cepDestino) isValid = true;
         (!destination.includes('Portugal') || !origin.includes('Portugal'))
-            ? setErr(true) : setErr(false);
+        ? setErr(true) : setErr(false);
+        setCalcTabela(obj);
            // if(origin[0] === destination[0]);
     }
 
     function handleSubmit(e) {
         e.preventDefault();
         //pegando os valores dos inputs após o submit
-
         setCepOrigem(e.target['origin'].value);
         setCepDestino(e.target['destination'].value);
+        setPeso(e.target['weight'].value);
+        
     }
 
     return (
@@ -102,7 +76,6 @@ export default function Calculator() {
                                         {item}</option>
                                 ))}
                             </Select>
-
                         </Label>
                         <Label>
                             Para onde:
@@ -115,15 +88,16 @@ export default function Calculator() {
                             </Select>
                         </Label>
                     </PostalCodes>
-
                     <span>
                         <Label>
                             Qual a dimensão da sua encomenda:
                             <PostalCodes>
-                                <input type="text" placeholder='Altura(cm)' />
-                                <input type="text" placeholder='Comprimento(cm)' />
-                                <input type="text" placeholder='Largura(cm)' />
-                                <input type="text" placeholder='Número de volumes' />
+                                <Select name='weight' type="text">
+                                    <option hidden defaultChecked value=''>Qual é o Peso?*</option>
+                                    <option value="1kg">1kg</option>
+                                    <option value="2kg">2kg</option>
+                                    <option value="5kg" >5kg</option>
+                                </Select>
                             </PostalCodes>
                         </Label>
                     </span>
@@ -131,7 +105,7 @@ export default function Calculator() {
                 </Form>
                 <ContainerPopUp>
                     <PopUp active={visible} >
-                        <div>Valor do frete: {visible ? total : ''}€</div>
+                       <TablePrice props={CalcTabela}/>
                     </PopUp>
                     <AlertError alertVisible={alert}>No momento só estamos entregando em Portugal</AlertError>
                 </ContainerPopUp>
