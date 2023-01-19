@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { primary } from '../styles/colors';
+import { primary } from '../../styles/colors';
 export const Container = styled.div`
     display: flex;
     justify-content: center;
@@ -49,20 +49,8 @@ export const PostalCodes = styled.div`
     width: 100%;
     height: 30%;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    div{
-        margin-top: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-    }
-`;
-export const AlertError = styled.p`
-    color: red;
-    visibility: ${(props) => props.alertVisible ? 'visible' : 'hidden'};
-    
 `;
 export const PopUp = styled.span`
     width: auto;
@@ -76,7 +64,7 @@ export const PopUp = styled.span`
     color: #fff;
     font-size: 18px;
     visibility: ${(props) => props.active ? 'visible' : 'hidden'};
-    padding: 10px;
+    padding: 10px 25px;
     div{
         display: flex;
         justify-content: center;
@@ -85,7 +73,11 @@ export const PopUp = styled.span`
         
     }
 `;
-
+export const AlertError = styled.p`
+    color: red;
+    visibility: ${(props) => props.alertVisible ? 'visible' : 'hidden'};
+    
+`;
 export const ContainerPopUp = styled.span`
     width: 100%;
     height: 40%;
@@ -109,37 +101,32 @@ export const Label = styled.label`
     margin-top: 15px;
     input{
         border: none;
-        background: none;
-        margin-left: 15px;
-        margin-top: 10px;
-        height: 20px;
-        width: 200px;
+        height: 25px;
+        margin-top: 15px;
+        padding: 2px;
+        width: 155px;
+        margin-left: 10px;
         border-bottom: 2px solid ${primary};
-        text-align: center;
+
         :focus{
             outline: 2px solid ${primary};
             border-bottom: none;
+            padding: 2px;
             background: none;
         }
     }
 `;
-export const ContainerInputs = styled.div`
-        height: 80px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-`;
 export const Select = styled.select`
         border: none;
         background: none;
-        margin-left: 15px;
         height: 25px;
+        padding: 2px;
         width: 200px;
-        margin-bottom: 25px;
+        margin-left: 10px;
         border-bottom: 2px solid ${primary};
         padding: 2px;
         text-align: center;
+        margin-top: 5px;
         :focus{
             outline: 2px solid ${primary};
             border-bottom: none;
@@ -149,7 +136,8 @@ export const Select = styled.select`
         option{
             color: ${primary};
             font-size: 13px;
-            padding: 10px;        
+            padding: 10px;
+           
         }
 `;
 

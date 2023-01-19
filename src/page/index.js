@@ -3,62 +3,75 @@
 import { useState, useEffect } from 'react';
 import { Loader } from "@googlemaps/js-api-loader";
 import TablePrice from '../components/Address';
-
+import axios from '../service'
 import {
     Container, ContainerForm, PostalCodes, Select,
-    Label, Form, PopUp, ContainerPopUp, ButtonSubmit, AlertError,
+    Label, Form, ButtonSubmit, AlertError, ContainerInputs
 } from './styled';
-import { distritos } from '../components/Distritos';
 
 export default function Calculator() {
-    const loader = new Loader({
-        apiKey: process.env.REACT_APP_API_KEY,
-        version: "weekly",
-      })
-   // const service = new window.google.maps.DistanceMatrixService();
-    let visible = true;
-    let alert = false;
-    let isValid = false;
-    const [err, setErr] = useState(false);
-    const [cepOrigem, setCepOrigem] = useState('');
-    const [cepDestino, setCepDestino] = useState('');
-    const [peso, setPeso] = useState('');
-    const [distance, setDistance] = useState('');
-    const [CalcTabela, setCalcTabela] = useState(cepDestino);
 
+    const [err, setErr] = useState(false);
+    const [cepOrigin, setCepOrigin] = useState('');
+    const [cepDestination, setCepDestination] = useState('');
+    const [dataOrigin, setDataOrigin] = useState('');
+    const [dataDestination, setDataDestination] = useState('');
+    const [peso, setPeso] = useState('');
+    const [CalcTabela, setCalcTabela] = useState('');
+    const originLocation = dataOrigin.Distrito;
+    const DestinationLocation = dataDestination.Distrito;
 
     useEffect(() => {
-        loader.load().then(() =>{
-            const service = new window.google.maps.DistanceMatrixService();
-        if (cepOrigem && cepDestino) {
-                service.getDistanceMatrix(
-                {
-                    origins: [cepOrigem],
-                    destinations: [cepDestino],
-                    travelMode: 'DRIVING',
-                },(res)=> GetAddress(res))
+        async function getData(){
+            if(cepOrigin.length >= 7){
+               const origin = cepOrigin.replace('-', '');
+              
+               axios.get(origin).then(res =>{ 
+                setDataOrigin(res.data);
+                })      
             }
-        })
-    }, [cepDestino, cepOrigem, peso]);
-    
-    function GetAddress(data) {
-        const destination = data.destinationAddresses[0].split(', ');
-        const origin = data.originAddresses[0].split(', ');
-        const obj = { peso, destination: destination[0].replace(/\d.*\d./,"") }
-        if (!cepOrigem || !cepDestino) isValid = true;
-        (!destination.includes('Portugal') || !origin.includes('Portugal'))
-        ? setErr(true) : setErr(false);
-        setCalcTabela(obj);
-           // if(origin[0] === destination[0]);
+           if (cepDestination.length >= 7) {
+            const destination = cepDestination.replace('-', '');
+            console.log(destination);
+               axios.get(destination).then(res =>{ 
+                setDataDestination(res.data);
+                })      
+             }
+         }
+         getData();
+
+        },[cepDestination, cepOrigin, peso]);
+console.log(peso)
+    function GetAddress() {
+        if(peso && DestinationLocation){
+            const obj = { peso, DestinationLocation}
+            if(!cepOrigin || !cepDestination) return setErr(true);
+            setErr(false);
+            if (obj) return setCalcTabela(obj);
+            // if(origin[0] === destination[0]);
+        }
+    }
+
+    function maskInput(value){
+        const input = value;
+        if(!input) return '';
+        return input.replace(/\D/g, "")
+        .replace(/(\d{4})(\d{3})+\d?/, "$1-$2")
+    }
+    function handleCepOrigin(e){
+        e.preventDefault();
+        const value =  maskInput(e.target.value);
+        setCepOrigin(value);
+    }
+    function handleCepDestination(e){
+        e.preventDefault();
+        const value = maskInput(e.target.value);
+        setCepDestination(value);
     }
 
     function handleSubmit(e) {
         e.preventDefault();
-        //pegando os valores dos inputs após o submit
-        setCepOrigem(e.target['origin'].value);
-        setCepDestino(e.target['destination'].value);
-        setPeso(e.target['weight'].value);
-        
+        GetAddress();
     }
 
     return (
@@ -69,46 +82,43 @@ export default function Calculator() {
                     <PostalCodes>
                         <Label>
                             De onde:
-                            <Select name="origin">
-                                <option hidden defaultChecked value=''>Qual é o Distrito?*</option>
-                                {distritos.map((item, index) => (
-                                    <option name="ceporigin" key={index} value={item.value}>
-                                        {item}</option>
-                                ))}
-                            </Select>
+                            <ContainerInputs>
+                                <input name="cepOrigin" type="text" onChange={(e)=> handleCepOrigin(e)} value={cepOrigin} placeholder='Informe o CEP' />
+                                <input type="text" disabled value={originLocation} placeholder="Distrito"/>
+
+                            </ContainerInputs>
                         </Label>
                         <Label>
                             Para onde:
-                            <Select name="destination">
-                                <option hidden defaultChecked value=''>Qual é o Distrito?*</option>
-                                {distritos.map((item, index) => (
-                                    <option name="cepdestino" key={index} value={item.value}>
-                                        {item}</option>
-                                ))}
-                            </Select>
+                            <ContainerInputs>
+                             <input name="cepDestination" type="text" onChange={(e)=> handleCepDestination(e)} value={cepDestination} placeholder='Informe o CEP' />   
+                            <input type="text" disabled value={DestinationLocation} placeholder="Distrito"/>
+                            </ContainerInputs>
                         </Label>
                     </PostalCodes>
                     <span>
                         <Label>
                             Qual a dimensão da sua encomenda:
                             <PostalCodes>
-                                <Select name='weight' type="text">
-                                    <option hidden defaultChecked value=''>Qual é o Peso?*</option>
-                                    <option value="1kg">1kg</option>
-                                    <option value="2kg">2kg</option>
-                                    <option value="5kg" >5kg</option>
-                                </Select>
+                                <div>
+                                    <Select onChange={(e) => setPeso(e.target.value)} name='weight' type="text">
+                                        <option hidden defaultChecked value=''>Qual é o Peso?*</option>
+                                        <option value="1kg">1kg</option>
+                                        <option value="2kg">2kg</option>
+                                        <option value="5kg" >5kg</option>
+                                    </Select>
+                                </div>
+                                <input name="altura" type="text" placeholder='Altura(cm)' />
+                                <input name="largura" type="text" placeholder='Largura(cm)' />
+                                <input name="comprimento" type="text" placeholder='Comprimento(cm)' />
+                                <input name="comprimento" type="text" placeholder='Quantidade' />
                             </PostalCodes>
                         </Label>
                     </span>
                     <ButtonSubmit type='submit'> Simular </ButtonSubmit>
                 </Form>
-                <ContainerPopUp>
-                    <PopUp active={visible} >
-                       <TablePrice props={CalcTabela}/>
-                    </PopUp>
-                    <AlertError alertVisible={alert}>No momento só estamos entregando em Portugal</AlertError>
-                </ContainerPopUp>
+                <TablePrice props={CalcTabela} />
+                <AlertError alertVisible={err}>É preciso informar o distrito</AlertError>
             </ContainerForm>
         </Container >
     )

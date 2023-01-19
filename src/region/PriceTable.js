@@ -15,22 +15,23 @@ export const tablePrice = {
         '2kg': '3,49',
         '5kg': '3,97',
 
+    },'Aveiro': {
+        '1kg': '3,44',
+        '2kg': '3,61',
+        '5k': '4,13',
+
     },
     'Bragança': {
         '1kg': '3,41',
         '2kg': '3,61',
         '5kg': '4,09',
-
     },
     'Porto': {
-
         '1kg': '2,99',
         '2kg': '3,20',
         '5kg': '3,65',
-
-
     },
-    'VianadDoCastelo': {
+    'VianadoCastelo': {
         '1kg': '3,05',
         '2kg': '3,26',
         '5kg': '3,71',
