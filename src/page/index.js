@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
-import { Loader } from "@googlemaps/js-api-loader";
 import TablePrice from '../components/Address';
-import axios from '../service'
+import axios from '../service';
+import inputMaskCep from '../components/Util/InputMaskCep';
 import {
     Container, ContainerForm, PostalCodes, Select,
     Label, Form, ButtonSubmit, AlertError, ContainerInputs
@@ -20,15 +20,22 @@ export default function Calculator() {
     const [CalcTabela, setCalcTabela] = useState('');
     const originLocation = dataOrigin.Distrito;
     const DestinationLocation = dataDestination.Distrito;
-
+  
     useEffect(() => {
-        async function getData(){
+       function getData(){
             if(cepOrigin.length >= 7){
-               const origin = cepOrigin.replace('-', '');
-              
-               axios.get(origin).then(res =>{ 
-                setDataOrigin(res.data);
-                })      
+                    const origin = cepOrigin.replace('-', ''); 
+                        axios.get(origin).then(res =>{         
+                            setDataOrigin(res.data);
+                            setErr(false)
+                            console.clear();
+                        }).catch(err => {
+                            console.log(err.response.statusText)
+                            setErr(true);
+                            console.clear();
+                        })      
+               
+             
             }
            if (cepDestination.length >= 7) {
             const destination = cepDestination.replace('-', '');
@@ -41,15 +48,14 @@ export default function Calculator() {
          getData();
 
         },[cepDestination, cepOrigin, peso]);
-console.log(peso)
-    function GetAddress() {
-        if(peso && DestinationLocation){
+
+    function GetAddress() { 
             const obj = { peso, DestinationLocation}
             if(!cepOrigin || !cepDestination) return setErr(true);
             setErr(false);
-            if (obj) return setCalcTabela(obj);
-            // if(origin[0] === destination[0]);
-        }
+            console.log(obj)
+            setCalcTabela(obj);
+            // if(origin[0] === destination[0]);   
     }
 
     function maskInput(value){
@@ -60,12 +66,12 @@ console.log(peso)
     }
     function handleCepOrigin(e){
         e.preventDefault();
-        const value =  maskInput(e.target.value);
-        setCepOrigin(value);
+        const value =  inputMaskCep(e.target.value);
+        setCepDestination(value);
     }
     function handleCepDestination(e){
         e.preventDefault();
-        const value = maskInput(e.target.value);
+        const value = inputMaskCep(e.target.value);
         setCepDestination(value);
     }
 
@@ -78,7 +84,7 @@ console.log(peso)
         <Container>
             <ContainerForm>
                 <h1>Faça uma Simulação</h1>
-                <Form onSubmit={(e) => handleSubmit(e)}>
+                <Form>
                     <PostalCodes>
                         <Label>
                             De onde:
@@ -115,10 +121,10 @@ console.log(peso)
                             </PostalCodes>
                         </Label>
                     </span>
-                    <ButtonSubmit type='submit'> Simular </ButtonSubmit>
+                    <ButtonSubmit type='button' onClick={(e) => handleSubmit(e)}> Simular </ButtonSubmit>
                 </Form>
                 <TablePrice props={CalcTabela} />
-                <AlertError alertVisible={err}>É preciso informar o distrito</AlertError>
+                <AlertError alertVisible={err}>É preciso informar o cep válido</AlertError>
             </ContainerForm>
         </Container >
     )

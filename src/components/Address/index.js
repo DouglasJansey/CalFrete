@@ -11,6 +11,7 @@ export default function CalcPrice({ props }) {
     const {DestinationLocation} = props || '';
     
     useEffect(()=>{
+        console.log(peso)
         for(let key in tablePrice) {
             if(DestinationLocation){
                 const strDestination = DestinationLocation.replace(/( )+/g, '');
