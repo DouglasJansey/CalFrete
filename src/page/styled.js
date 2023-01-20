@@ -1,13 +1,18 @@
 import styled from 'styled-components';
 import { primary } from '../styles/colors';
+
+
+
 export const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-wrap: nowrap;
     width: 100%;
-    min-height: 550px;
+    height: 100%;
     background: #000;
-    font-family: 'Signika Negative', sans-serif;
+    font-family: 'sailec-regular', sans-serif;
+
     font-weight: 700;
 `;
 export const Form = styled.form`
@@ -29,7 +34,7 @@ export const Form = styled.form`
     }
 `;
 export const ContainerForm = styled.div`
-    width: 70%;
+    width: 100%;
     min-width: 200px;
     height: 100%;
     align-items: center;
@@ -40,8 +45,13 @@ export const ContainerForm = styled.div`
     flex-direction: column;
     position: relative;
     padding: 15px;
+    font-size: 18px;
     h1{
         text-align: center;
+        text-transform: uppercase;
+    }
+    p{
+        font-size: 10px;
     }
 `;
 export const PostalCodes = styled.div`
