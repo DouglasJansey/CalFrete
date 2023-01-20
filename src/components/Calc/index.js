@@ -2,10 +2,11 @@
 /* eslint-disable no-undef */
 import { useEffect, useState } from "react";
 import { tablePrice } from "../../region/PriceTable";
-import {PopUp, ContainerPopUp, AlertError } from './styled';
+import {PopUp, ContainerPopUp, AlertError, AlertErrorKg } from './styled';
 export default function CalcPrice({ props }) {
     const [total, setTotal] = useState('');
     const [err, setErr] = useState(false);
+    const [errorKg, setErrorKg] = useState(false);
     const [visible, setVisible] = useState(false);
     const {weight} = props || '';
     const {quantity} = props || '';
@@ -18,21 +19,26 @@ export default function CalcPrice({ props }) {
                 if(key === strDestination){
                     const value = tablePrice[key]
                     if(!weight || !quantity) return setErr(true);
-                    if(weight > 5) return setVisible(false);
+                    if(weight > 5) {
+                        setVisible(false);
+                       return setErrorKg(true);
+                    } 
                     const total = value[getWeight(weight)] * parseInt(quantity);
                     setTotal(total.toFixed(2));   
                     setVisible(true); 
-                    setErr(false)
+                    setErr(false);
+                    setErrorKg(false);
                 }
                 
             }
         }  
     },[props])
     const getWeight=(value)=>{
-        if(value && value < 5){
+        if(value && value <= 5){
             if(value > 0 && value < 2) return "1kg"
             if(value > 1 && value < 5) return "2kg"
-            if(value > 4 && value < 6) return "5kg"            
+            if(value > 4 && value < 6) return "5kg"
+            if(value >= 6) ;            
         }
     }
 
@@ -43,6 +49,7 @@ export default function CalcPrice({ props }) {
             Valor do frete: {total}
          </PopUp>
         <AlertError alertVisible={err}>É preciso informar o peso e quantidade</AlertError>
+        <AlertErrorKg alertError={errorKg}>Peso maior que 5kg, por favor, entre em contato!</AlertErrorKg>
         </ContainerPopUp>
     )
 }

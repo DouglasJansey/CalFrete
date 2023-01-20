@@ -1,15 +1,13 @@
 import styled from 'styled-components';
 import { primary } from '../styles/colors';
 
-
-
 export const Container = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
     flex-wrap: nowrap;
     width: 100%;
-    height: 100%;
+    height: auto;
     background: #000;
     font-family: 'sailec-regular', sans-serif;
 
@@ -22,7 +20,7 @@ export const Form = styled.form`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 2px;
+    margin-bottom: 5px;
     
     span{
         width: 100%;
@@ -44,7 +42,6 @@ export const ContainerForm = styled.div`
     display:flex;
     flex-direction: column;
     position: relative;
-    padding: 15px;
     font-size: 18px;
     h1{
         text-align: center;
@@ -72,41 +69,12 @@ export const PostalCodes = styled.div`
 export const AlertError = styled.p`
     color: red;
     visibility: ${(props) => props.alertVisible ? 'visible' : 'hidden'};
-    
 `;
-export const PopUp = styled.span`
-    width: auto;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 15px;
-    background: ${primary};
-    color: #fff;
-    font-size: 18px;
-    visibility: ${(props) => props.active ? 'visible' : 'hidden'};
-    padding: 10px;
-    div{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: auto;
-        
-    }
+export const AlertErrorInput = styled.p`
+    color: red;
+    visibility: ${(props) => props.alertErrorVisible ? 'visible' : 'hidden'};
 `;
 
-export const ContainerPopUp = styled.span`
-    width: 100%;
-    height: 40%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    padding: 5px;
-
-`;
 export const Label = styled.label`
     display: flex;
     justify-content: center;
@@ -116,7 +84,7 @@ export const Label = styled.label`
     height: 15%;
     padding: 5px;
     position: relative;
-    margin-top: 15px;
+    margin-top: 5px;
     input{
         border: none;
         background: none;
@@ -134,37 +102,14 @@ export const Label = styled.label`
     }
 `;
 export const ContainerInputs = styled.div`
-        height: 80px;
+        height: auto;
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
 `;
-export const Select = styled.select`
-        border: none;
-        background: none;
-        margin-left: 15px;
-        height: 25px;
-        width: 200px;
-        margin-bottom: 25px;
-        border-bottom: 2px solid ${primary};
-        padding: 2px;
-        text-align: center;
-        :focus{
-            outline: 2px solid ${primary};
-            border-bottom: none;
-            padding: 2px;
-            background: none;
-        }
-        option{
-            color: ${primary};
-            font-size: 13px;
-            padding: 10px;        
-        }
-`;
 
 export const ButtonSubmit = styled.button`
-    margin-top: 20px;
     width: 200px;
     height: 50px;
     border: none;

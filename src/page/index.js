@@ -5,14 +5,18 @@ import TablePrice from '../components/Calc';
 import axios from '../service';
 import inputMaskCep from '../components/Util/InputMaskCep';
 import {
-    Container, ContainerForm, PostalCodes, Select,
+    Container, ContainerForm, PostalCodes, AlertErrorInput,
     Label, Form, ButtonSubmit, AlertError, ContainerInputs
 } from './styled';
 
 export default function Calculator() {
 
     const [err, setErr] = useState(false);
+    const [alertError, setAlertError] = useState(false);
     const [cepOrigin, setCepOrigin] = useState('');
+    const [itemHeight, setHeight] = useState('');
+    const [itemWidth, setWidth] = useState('');
+    const [itemLength, setLength] = useState('');
     const [cepDestination, setCepDestination] = useState('');
     const [dataOrigin, setDataOrigin] = useState('');
     const [dataDestination, setDataDestination] = useState('');
@@ -52,8 +56,10 @@ export default function Calculator() {
     function GetAddress() { 
             const obj = { weight, DestinationLocation, quantity}
             if(!cepOrigin || !cepDestination) return setErr(true);
+            if(!itemWidth || !itemHeight || !itemLength) return setAlertError(true)
             setErr(false);
             setCalcTable(obj);
+            setAlertError(false)
             // if(origin[0] === destination[0]);   
     }
 
@@ -82,7 +88,7 @@ export default function Calculator() {
                         <Label>
                             De onde:
                             <ContainerInputs>
-                                <input name="cepOrigin" type="text" onChange={(e)=> handleCepOrigin(e)} value={cepOrigin} placeholder='Código Postal' />
+                                <input name="cepOrigin" type="text" onChange={(e)=> handleCepOrigin(e)} value={cepOrigin} placeholder='Código Postal*' />
                                 <input type="text" disabled value={originLocation} placeholder="Distrito"/>
 
                             </ContainerInputs>
@@ -90,7 +96,7 @@ export default function Calculator() {
                         <Label>
                             Para onde:
                             <ContainerInputs>
-                             <input name="cepDestination" type="text" onChange={(e)=> handleCepDestination(e)} value={cepDestination} placeholder='Código Postal' />   
+                             <input name="cepDestination" type="text" onChange={(e)=> handleCepDestination(e)} value={cepDestination} placeholder='Código Postal*' />   
                             <input type="text" disabled value={DestinationLocation} placeholder="Distrito"/>
                             </ContainerInputs>
                         </Label>
@@ -100,20 +106,20 @@ export default function Calculator() {
                             Qual a dimensão da sua encomenda:
                             <PostalCodes>
                                 <div>
-                                <input name="weight" type="text" onChange={(e) => setWeight(e.target.value.replace(/\D/g, ''))} placeholder='Peso(kg)' />
+                                <input name="weight" type="text" onChange={(e) => setWeight(e.target.value.replace(/\D/g, ''))} placeholder='Peso(kg)*' />
                                 </div>
-                                <input name="altura" type="text" placeholder='Altura(cm)' />
-                                <input name="largura" type="text" placeholder='Largura(cm)' />
-                                <input name="comprimento" type="text" placeholder='Comprimento(cm)' />
-                                <input name="quantity" type="text" onChange={(e) => setQuantity(e.target.value.replace(/\D/g, ''))} placeholder='Número de volumes' />
+                                <input name="height" type="text" onChange={(e)=> setHeight(e.target.value)} placeholder='Altura(cm)*' />
+                                <input name="width" type="text" onChange={(e)=> setWidth(e.target.value)} placeholder='Largura(cm)*' />
+                                <input name="length" type="text" onChange={(e)=> setLength(e.target.value)} placeholder='Comprimento(cm)*' />
+                                <input name="quantity" type="text" onChange={(e) => setQuantity(e.target.value.replace(/\D/g, ''))} placeholder='Número de volumes*' />
                             </PostalCodes>
                         </Label>
                     </span>
+                    <AlertErrorInput alertErrorVisible={alertError}>Todos os campos são obrigatórios</AlertErrorInput>
                     <ButtonSubmit type='button' onClick={(e) => handleSubmit(e)}> Simular </ButtonSubmit>
                 </Form>
                 <TablePrice props={CalcTable} />
                 <AlertError alertVisible={err}>É preciso informar o cep válido</AlertError>
-                <p>Peso maior que 5kg, por favor, entre em contato!</p>
             </ContainerForm>
         </Container >
     )
