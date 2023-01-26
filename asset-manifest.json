@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/CalFrete/static/js/main.6b94d2de.js",
+    "main.js": "/CalFrete/static/js/main.fddd1705.js",
     "index.html": "/CalFrete/index.html",
-    "main.6b94d2de.js.map": "/CalFrete/static/js/main.6b94d2de.js.map"
+    "main.fddd1705.js.map": "/CalFrete/static/js/main.fddd1705.js.map"
   },
   "entrypoints": [
-    "static/js/main.6b94d2de.js"
+    "static/js/main.fddd1705.js"
   ]
 }
