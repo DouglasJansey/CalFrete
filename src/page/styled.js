@@ -10,7 +10,6 @@ export const Container = styled.div`
     height: auto;
     background: #000;
     font-family: 'sailec-regular', sans-serif;
-
     font-weight: 700;
 `;
 export const Form = styled.form`
@@ -33,8 +32,7 @@ export const Form = styled.form`
 `;
 export const ContainerForm = styled.div`
     width: 100%;
-    min-width: 200px;
-    height: 100%;
+    height: auto;
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
@@ -42,13 +40,11 @@ export const ContainerForm = styled.div`
     display:flex;
     flex-direction: column;
     position: relative;
-    font-size: 18px;
+    font-size: 15px;
+    padding: 5px;
     h1{
         text-align: center;
         text-transform: uppercase;
-    }
-    p{
-        font-size: 10px;
     }
 `;
 export const PostalCodes = styled.div`
@@ -66,13 +62,16 @@ export const PostalCodes = styled.div`
         width: 100%;
     }
 `;
-export const AlertError = styled.p`
+export const AlertError = styled.div`
     color: red;
-    visibility: ${(props) => props.alertVisible ? 'visible' : 'hidden'};
-`;
-export const AlertErrorInput = styled.p`
+    margin-top: 5px;
+    display:  ${(props) => props.alertVisible ? '' : 'none'};
+    `;
+export const AlertErrorInput = styled.div`
+    margin-top: 5px;
     color: red;
-    visibility: ${(props) => props.alertErrorVisible ? 'visible' : 'hidden'};
+    display: ${(props) => props.alertErrorVisible ? '' : 'none'};
+
 `;
 
 export const Label = styled.label`
@@ -118,6 +117,7 @@ export const ButtonSubmit = styled.button`
     color: #fff;
     font-weight: bold ;
     font-size: 18px;
+    margin-top: 25px;
     cursor: pointer;
     position: relative;
     :hover{

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-undef */
 import { useEffect, useState } from "react";
-import { tablePrice } from "../../region/PriceTable";
+import  tableRegion  from "../../region/Region.json";
 import {PopUp, ContainerPopUp, AlertError, AlertErrorKg } from './styled';
 export default function CalcPrice({ props }) {
     const [total, setTotal] = useState('');
@@ -10,46 +10,49 @@ export default function CalcPrice({ props }) {
     const [visible, setVisible] = useState(false);
     const {weight} = props || '';
     const {quantity} = props || '';
+    const {OriginLocation} = props || '';
     const {DestinationLocation} = props || '';
-    
-    useEffect(()=>{
-        for(let key in tablePrice) {
-            if(DestinationLocation){
-                const strDestination = DestinationLocation.replace(/( )+/g, '');
-                if(key === strDestination){
-                    const value = tablePrice[key]
+
+    useEffect(()=>{  
+                if(OriginLocation && DestinationLocation){
+                    const value = tableRegion[OriginLocation.toUpperCase()];
                     if(!weight || !quantity) return setErr(true);
-                    if(weight > 5) {
+                    if(weight > 10) {
                         setVisible(false);
                        return setErrorKg(true);
                     } 
-                    const total = value[getWeight(weight)] * parseInt(quantity);
-                    setTotal(total.toFixed(2));   
+
+                    getWeight(value);    
                     setVisible(true); 
                     setErr(false);
-                    setErrorKg(false);
+                    setErrorKg(false);               
                 }
-                
-            }
-        }  
-    },[props])
+
+    },[props, weight])
     const getWeight=(value)=>{
-        if(value && value <= 5){
-            if(value > 0 && value < 2) return "1kg"
-            if(value > 1 && value < 5) return "2kg"
-            if(value > 4 && value < 6) return "5kg"
-            if(value >= 6) ;            
+ 
+        if(value){
+            let newWeight = weight;
+            if(newWeight > 2 && newWeight < 5) newWeight = 5;
+            const peso = `até ${newWeight} kg`;
+            const filter = value.filter((item)=>{
+              return item.PESO.toLowerCase() === peso;  
+            });
+            const price = filter[0][DestinationLocation] * parseInt(quantity);
+            setTotal(price.toFixed(2))
         }
+
     }
 
     return (
         <ContainerPopUp> 
         <PopUp active={visible}>
-            <div>{DestinationLocation}</div>
+           {/* <div>Destino: {DestinationLocation}</div>*/}
             Valor do frete: {total}
          </PopUp>
-        <AlertError alertVisible={err}>É preciso informar o peso e quantidade</AlertError>
-        <AlertErrorKg alertError={errorKg}>Peso maior que 5kg, por favor, entre em contato!</AlertErrorKg>
+        <AlertError alertVisible={err}>É preciso informar {weight ? 'quantidade' : 'peso'}</AlertError>
+        <AlertErrorKg alertError={errorKg}>Peso maior que 10kg, por favor, entre em contato!</AlertErrorKg>
+         <div>Peso maior que 10kg, por favor, entre em contato!</div>
         </ContainerPopUp>
     )
 }

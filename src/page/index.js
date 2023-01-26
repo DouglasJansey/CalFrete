@@ -14,10 +14,10 @@ export default function Calculator() {
     const [err, setErr] = useState(false);
     const [alertError, setAlertError] = useState(false);
     const [cepOrigin, setCepOrigin] = useState('');
+    const [cepDestination, setCepDestination] = useState('');
     const [itemHeight, setHeight] = useState('');
     const [itemWidth, setWidth] = useState('');
     const [itemLength, setLength] = useState('');
-    const [cepDestination, setCepDestination] = useState('');
     const [dataOrigin, setDataOrigin] = useState('');
     const [dataDestination, setDataDestination] = useState('');
     const [weight, setWeight] = useState();
@@ -25,6 +25,7 @@ export default function Calculator() {
     const [CalcTable, setCalcTable] = useState('');
     const originLocation = dataOrigin.Distrito;
     const DestinationLocation = dataDestination.Distrito;
+    const OriginLocation = dataOrigin.Distrito;
   
     useEffect(() => {
        function getData(){
@@ -54,13 +55,12 @@ export default function Calculator() {
         },[cepDestination, cepOrigin, weight]);
 
     function GetAddress() { 
-            const obj = { weight, DestinationLocation, quantity}
-            if(!cepOrigin || !cepDestination) return setErr(true);
-            if(!itemWidth || !itemHeight || !itemLength) return setAlertError(true)
+            const obj = { weight, DestinationLocation, OriginLocation, quantity}
+           if(!cepOrigin || !cepDestination) return setErr(true);
+           if(!itemWidth || !itemHeight || !itemLength) return setAlertError(true)
             setErr(false);
             setCalcTable(obj);
             setAlertError(false)
-            // if(origin[0] === destination[0]);   
     }
 
     function handleCepOrigin(e){
@@ -116,10 +116,10 @@ export default function Calculator() {
                         </Label>
                     </span>
                     <AlertErrorInput alertErrorVisible={alertError}>Todos os campos são obrigatórios</AlertErrorInput>
+                    <AlertError alertVisible={err}>É preciso informar o cep válido</AlertError>
                     <ButtonSubmit type='button' onClick={(e) => handleSubmit(e)}> Simular </ButtonSubmit>
                 </Form>
                 <TablePrice props={CalcTable} />
-                <AlertError alertVisible={err}>É preciso informar o cep válido</AlertError>
             </ContainerForm>
         </Container >
     )

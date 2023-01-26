@@ -1,58 +1,6 @@
 import styled from 'styled-components';
 import { primary } from '../../styles/colors';
 
-export const Container = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    min-height: 550px;
-    background: #000;
-    font-family: 'Signika Negative', sans-serif;
-    font-weight: 700;
-`;
-export const Form = styled.form`
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 2px;
-    
-    span{
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        margin-top: 30px;
-        justify-content: center;
-        align-items: center;
-    }
-`;
-export const ContainerForm = styled.div`
-    width: 70%;
-    min-width: 200px;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    background: #fff;
-    display:flex;
-    flex-direction: column;
-    position: relative;
-    padding: 15px;
-    h1{
-        text-align: center;
-    }
-`;
-export const PostalCodes = styled.div`
-    display: flex;
-    width: 100%;
-    height: 30%;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
-`;
 export const PopUp = styled.span`
     display: flex;
     flex-direction: column;
@@ -61,9 +9,10 @@ export const PopUp = styled.span`
     border-radius: 15px;
     background: ${primary};
     color: #fff;
-    font-size: 18px;
-    visibility: ${(props) => props.active ? 'visible' : 'hidden'};
-    padding: 10px 25px;
+    font-size: 20px;
+    display: ${(props) => props.active ? '' : 'none'};
+    padding: 15px 35px;
+    margin: 10px;
     div{
         display: flex;
         justify-content: center;
@@ -72,21 +21,24 @@ export const PopUp = styled.span`
         
     }
 `;
-export const AlertError = styled.p`
+export const AlertError = styled.div`
     color: red;
-    visibility: ${(props) => props.alertVisible ? 'visible' : 'hidden'};
+    display: ${(props) => props.alertVisible ? '' : 'none'};
+
     
-`;
-export const AlertErrorKg = styled.p`
+    `;
+export const AlertErrorKg = styled.div`
     color: red;
-    visibility: ${(props) => props.alertError ? 'visible' : 'hidden'};
-    
+    display: ${(props) => props.alertError ? '' : 'none'};    
+  
 `;
 export const ContainerPopUp = styled.span`
     width: 100%;
+    height: auto;
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-direction: column;
-    position: relative;
+    div{
+        margin-top: 10px;
+    }
 `;
